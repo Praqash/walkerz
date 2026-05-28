@@ -154,7 +154,10 @@ button {
 }
 
 .brand,
-.nav-links {
+.nav-links,
+.header-actions,
+.auth-actions,
+.user-chip {
     display: flex;
     align-items: center;
 }
@@ -174,7 +177,13 @@ button {
     color: var(--accent);
 }
 
-.nav-links {
+.header-actions {
+    gap: 14px;
+    justify-content: flex-end;
+}
+
+.nav-links,
+.auth-actions {
     gap: 8px;
 }
 
@@ -189,6 +198,43 @@ button {
 .nav-links a:hover {
     background: #eee5d8;
     color: var(--primary-dark);
+}
+
+.compact-button {
+    min-height: 40px;
+    padding: 0 14px;
+}
+
+.signed-in-actions {
+    max-width: 360px;
+}
+
+.user-chip {
+    max-width: 220px;
+    gap: 8px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: white;
+    color: var(--primary-dark);
+    font-size: 0.9rem;
+    font-weight: 700;
+    min-height: 40px;
+    padding: 0 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-chip svg {
+    flex: 0 0 auto;
+    color: var(--accent);
+}
+
+.skeleton-action {
+    width: 148px;
+    height: 40px;
+    border-radius: 999px;
+    background: #eee5d8;
 }
 
 .hero-section {
@@ -459,7 +505,8 @@ button {
     width: 100%;
 }
 
-.transaction-backdrop {
+.transaction-backdrop,
+.auth-backdrop {
     position: fixed;
     inset: 0;
     z-index: 30;
@@ -469,9 +516,100 @@ button {
     background: rgba(30, 30, 28, 0.42);
 }
 
-.transaction-card {
+.auth-backdrop {
+    z-index: 40;
+}
+
+.transaction-card,
+.auth-card {
     position: relative;
     width: min(560px, 100%);
+}
+
+.auth-card {
+    padding: 24px;
+}
+
+.auth-tabs {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    margin-bottom: 22px;
+    padding: 4px;
+}
+
+.auth-tabs button {
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 800;
+    min-height: 36px;
+    padding: 0 16px;
+}
+
+.auth-tabs button.active {
+    background: white;
+    color: var(--primary-dark);
+    box-shadow: 0 8px 20px rgba(46, 36, 25, 0.08);
+}
+
+.auth-heading {
+    margin-bottom: 22px;
+}
+
+.auth-heading h2 {
+    margin: 0 0 8px;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.auth-heading span,
+.auth-message {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.auth-alert {
+    border: 1px solid #ead2a5;
+    border-radius: 16px;
+    background: #fff6e6;
+    color: #725018;
+    line-height: 1.55;
+    margin-bottom: 16px;
+    padding: 12px 14px;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 18px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+.auth-form {
+    margin: 0;
+}
+
+.auth-message {
+    margin: 16px 0 0;
+}
+
+#recaptcha-container {
+    min-height: 0;
 }
 
 .close-button {
@@ -549,15 +687,24 @@ button {
         width: min(100% - 24px, 1120px);
     }
 
-    .header-content {
+    .header-content,
+    .header-actions {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .header-content {
         gap: 12px;
         padding: 14px 0;
     }
 
-    .nav-links {
+    .header-actions,
+    .nav-links,
+    .auth-actions {
         width: 100%;
+    }
+
+    .nav-links {
         overflow-x: auto;
         padding-bottom: 2px;
         scrollbar-width: none;
@@ -633,14 +780,34 @@ button {
         font-size: 0.98rem;
     }
 
-    .transaction-backdrop {
+    .transaction-backdrop,
+    .auth-backdrop {
         align-items: end;
         padding: 12px;
     }
 
-    .transaction-card {
+    .transaction-card,
+    .auth-card {
         max-height: calc(100vh - 24px);
         overflow-y: auto;
+    }
+
+    .auth-actions {
+        flex-wrap: wrap;
+    }
+
+    .auth-actions .compact-button {
+        flex: 1 1 140px;
+    }
+
+    .signed-in-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .user-chip {
+        max-width: 100%;
+        width: 100%;
     }
 }
 
@@ -649,6 +816,14 @@ button {
     .secondary-button {
         width: 100%;
         padding: 0 16px;
+    }
+
+    .auth-tabs {
+        width: 100%;
+    }
+
+    .auth-tabs button {
+        flex: 1;
     }
 
     .hero-copy {

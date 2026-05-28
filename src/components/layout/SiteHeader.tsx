@@ -1,4 +1,5 @@
 import CabinIcon from "@mui/icons-material/Cabin";
+import UserMenu from "@/components/auth/UserMenu";
 
 const navItems = [
   { label: "Rooms", href: "#rooms" },
@@ -15,13 +16,16 @@ export default function SiteHeader() {
           <CabinIcon />
           <span>Walkerz</span>
         </a>
-        <nav className="nav-links" aria-label="Primary navigation">
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        <div className="header-actions">
+          <nav className="nav-links" aria-label="Primary navigation">
+            {navItems.map((item) => (
+              <a key={item.href} href={item.href}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <UserMenu />
+        </div>
       </div>
     </header>
   );
