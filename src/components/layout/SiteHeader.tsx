@@ -4,6 +4,7 @@ const navItems = [
   { label: "Rooms", href: "#rooms" },
   { label: "Booking", href: "#booking" },
   { label: "Transaction", href: "#transaction" },
+  { label: "Gallery", href: "#gallery" },
 ];
 
 export default function SiteHeader() {

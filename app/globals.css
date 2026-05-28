@@ -169,7 +169,8 @@ button {
 .brand svg,
 .eyebrow svg,
 .feature-pill svg,
-.transaction-status svg {
+.transaction-status svg,
+.gallery-icon svg {
     color: var(--accent);
 }
 
@@ -196,9 +197,7 @@ button {
 
 .hero-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
     gap: 32px;
-    align-items: stretch;
 }
 
 .hero-copy {
@@ -234,7 +233,11 @@ button {
     line-height: 1.7;
 }
 
-.hero-card {
+.gallery-section {
+    padding-bottom: 72px;
+}
+
+.gallery-card {
     display: flex;
     min-height: 360px;
     flex-direction: column;
@@ -244,7 +247,7 @@ button {
     position: relative;
 }
 
-.hero-card::before {
+.gallery-card::before {
     content: "";
     position: absolute;
     inset: 20px;
@@ -252,24 +255,37 @@ button {
     border-radius: 20px;
 }
 
-.hero-card span,
-.hero-card h2,
-.hero-card p {
+.gallery-icon,
+.gallery-card span,
+.gallery-card h2,
+.gallery-card p {
     position: relative;
 }
 
-.hero-card span {
+.gallery-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--surface);
+    margin-bottom: auto;
+}
+
+.gallery-card span {
     color: var(--muted);
     font-weight: 700;
 }
 
-.hero-card h2 {
+.gallery-card h2 {
     margin: 12px 0;
     font-size: clamp(2.5rem, 6vw, 4.5rem);
     letter-spacing: -0.07em;
 }
 
-.hero-card p {
+.gallery-card p {
+    max-width: 620px;
     margin: 0;
     color: var(--muted);
     line-height: 1.6;
@@ -519,5 +535,103 @@ button {
 
     .section {
         padding: 36px 0;
+    }
+
+    .booking-panel {
+        position: static;
+    }
+}
+
+@media (max-width: 640px) {
+    .container {
+        width: min(100% - 24px, 1120px);
+    }
+
+    .header-content {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+        padding: 14px 0;
+    }
+
+    .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+    }
+
+    .nav-links::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-links a {
+        flex: 0 0 auto;
+        padding: 9px 12px;
+    }
+
+    .hero-section {
+        padding: 40px 0 16px;
+    }
+
+    .hero-copy h1 {
+        font-size: clamp(2.35rem, 13vw, 3.75rem);
+    }
+
+    .hero-copy > p:not(.eyebrow) {
+        font-size: 1rem;
+    }
+
+    .room-card-header,
+    .price-summary div,
+    .receipt-row,
+    .transaction-id {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .room-price {
+        justify-items: start;
+    }
+
+    .room-card,
+    .booking-panel,
+    .transaction-card,
+    .gallery-card {
+        padding: 20px;
+    }
+
+    .gallery-card {
+        min-height: 300px;
+    }
+
+    .transaction-backdrop {
+        align-items: end;
+        padding: 12px;
+    }
+
+    .transaction-card {
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 420px) {
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+        padding: 0 16px;
+    }
+
+    .hero-copy {
+        align-items: stretch;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+    }
+
+    .gallery-card h2 {
+        font-size: 2.6rem;
     }
 }

@@ -12,17 +12,13 @@ export default function HeroSection() {
           </p>
           <h1>Book a quiet stay at Walkerz in Manali.</h1>
           <p>
-            Browse available rooms, reserve your preferred stay, and review the transaction details in a simple booking flow.
+            Browse available rooms, reserve your preferred stay, and review the
+            transaction details in a simple booking flow.
           </p>
           <a className="primary-button" href="#booking">
             <CalendarMonthIcon fontSize="small" />
             Start booking
           </a>
-        </div>
-        <div className="hero-card card">
-          <span>Minimal mountain stay</span>
-          <h2>Walkerz</h2>
-          <p>Comfortable rooms, warm hospitality, and quick booking for travelers visiting Manali.</p>
         </div>
       </div>
     </section>
