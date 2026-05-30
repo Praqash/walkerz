@@ -232,7 +232,8 @@ button {
     color: var(--accent);
 }
 
-.user-chip-label {
+.user-chip-label,
+.logout-label {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -839,24 +840,31 @@ button {
         align-items: center;
         flex-direction: row;
         flex-wrap: nowrap;
+        gap: 6px;
         justify-content: flex-end;
         max-width: none;
         position: absolute;
-        top: 14px;
+        top: 16px;
         right: 0;
-        left: 122px;
+        left: 126px;
         width: auto;
     }
 
     .signed-in-actions .compact-button {
         flex: 0 0 auto;
-        min-width: 98px;
+        min-height: 34px;
+        min-width: 82px;
+        padding: 0 10px;
+        font-size: 0.82rem;
     }
 
     .user-chip {
         flex: 0 1 auto;
-        max-width: 180px;
+        max-width: 150px;
         width: auto;
+        min-height: 34px;
+        padding: 0 10px;
+        font-size: 0.82rem;
     }
 }
 
@@ -883,19 +891,36 @@ button {
     }
 
     .signed-in-actions {
-        left: 112px;
+        left: 118px;
         gap: 6px;
+        top: 16px;
     }
 
     .signed-in-actions .compact-button {
-        min-width: 0;
-        width: auto;
-        padding: 0 10px;
+        width: 36px;
+        min-width: 36px;
+        min-height: 34px;
+        padding: 0;
+    }
+
+    .signed-in-actions .compact-button svg {
+        margin: 0;
+    }
+
+    .logout-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
     }
 
     .user-chip {
-        max-width: 138px;
+        max-width: 132px;
+        min-height: 34px;
         padding: 0 10px;
+        font-size: 0.8rem;
     }
 
     .hero-copy {

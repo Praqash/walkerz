@@ -39,7 +39,7 @@ export default function UserMenu() {
           onClick={logout}
         >
           <LogoutIcon fontSize="small" />
-          Logout
+          <span className="logout-label">Logout</span>
         </button>
       </div>
     );
