@@ -1,6 +1,6 @@
 "use client";
 
-import type { User } from "@supabase/supabase-js";
+import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import {
   createContext,
   useContext,
@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { supabase } from "@/lib/supabase";
+import { auth } from "@/lib/firebase";
 
 type AuthContextValue = {
   user: User | null;
@@ -24,24 +24,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    if (!supabase) {
+    if (!auth) {
       setIsReady(true);
       return undefined;
     }
 
-    supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
+    return onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
       setIsReady(true);
     });
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        setIsReady(true);
-      },
-    );
-
-    return () => listener.subscription.unsubscribe();
   }, []);
 
   const value = useMemo(
@@ -49,7 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       isReady,
       logout: async () => {
-        await supabase?.auth.signOut();
+        if (auth) {
+          await signOut(auth);
+        }
       },
     }),
     [user, isReady],

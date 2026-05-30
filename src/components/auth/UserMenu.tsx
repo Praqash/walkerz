@@ -25,10 +25,7 @@ export default function UserMenu() {
   }
 
   if (user) {
-    const displayName =
-      typeof user.user_metadata.name === "string"
-        ? user.user_metadata.name
-        : (user.email ?? user.phone ?? "Guest");
+    const displayName = user.displayName ?? user.email ?? "Guest";
 
     return (
       <div className="auth-actions signed-in-actions">

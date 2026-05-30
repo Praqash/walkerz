@@ -1,44 +1,43 @@
 # Walkerz authentication setup
 
-The website uses Supabase Auth for free-tier Google sign-in and email OTP login.
+The website uses Firebase Authentication for Gmail/Google login.
 
-Mobile SMS OTP is not included because SMS delivery normally requires a paid provider. Email OTP/magic-link login stays free-tier friendly and works well on Vercel.
+## 1. Create a Firebase project
 
-## 1. Create a Supabase project
+1. Go to https://console.firebase.google.com/
+2. Create a project.
+3. Keep Google Analytics disabled unless you need it.
 
-1. Go to https://supabase.com/dashboard/projects
-2. Create a new project.
-3. Choose the free plan.
-4. Save the project URL and anon public key from **Project Settings > API**.
+## 2. Enable Gmail login
 
-## 2. Enable authentication methods
+In Firebase Console:
 
-In Supabase Dashboard:
+1. Go to **Authentication**.
+2. Click **Get started** if Authentication is not enabled yet.
+3. Open **Sign-in method**.
+4. Enable **Google**.
+5. Choose a project support email and save.
 
-1. Go to **Authentication > Providers**.
-2. Enable **Email**.
-3. Enable **Google**.
+## 3. Add a web app
 
-For Google login, Supabase requires Google OAuth credentials. Create them in Google Cloud Console, then add the Client ID and Client Secret in Supabase's Google provider settings.
-
-## 3. Configure redirect URLs
-
-In Supabase Dashboard:
-
-1. Go to **Authentication > URL Configuration**.
-2. Set **Site URL** to your production Vercel URL.
-3. Add your local and Vercel URLs to **Redirect URLs**:
-   - `http://localhost:3000`
-   - Your Vercel production URL
-   - Any custom domain you add later
+1. Go to **Project settings**.
+2. Under **Your apps**, click the web icon.
+3. Register the app as `walkerz-web`.
+4. Copy these values from the Firebase config:
+   - `apiKey`
+   - `authDomain`
+   - `projectId`
+   - `appId`
 
 ## 4. Configure local environment
 
-Create `.env.local` from `.env.example` and fill in the Supabase values:
+Create `.env.local` from `.env.example` and fill in the Firebase values:
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
 ```
 
 ## 5. Configure Vercel environment
@@ -47,16 +46,16 @@ Add the same variables in Vercel:
 
 1. Open the `walkerz` project in Vercel.
 2. Go to **Settings > Environment Variables**.
-3. Add both `NEXT_PUBLIC_SUPABASE_*` values.
+3. Add all four `NEXT_PUBLIC_FIREBASE_*` values.
 4. Redeploy the production deployment.
 
-## 6. CLI option
+## 6. Authorized domains
 
-After creating the Supabase project, you can set Vercel variables from the terminal:
+In Firebase Console:
 
-```bash
-vercel env add NEXT_PUBLIC_SUPABASE_URL production
-vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
-```
+1. Go to **Authentication > Settings > Authorized domains**.
+2. Add your Vercel domain, for example:
+   - `website-six-puce-69.vercel.app`
+3. Add any custom domain later if you connect one.
 
-Repeat for preview/development if needed.
+Firebase Google login does not need mobile OTP or paid SMS services.
