@@ -17,6 +17,8 @@ type BookingPanelProps = {
   nights: number;
   total: number;
   canSubmit: boolean;
+  isProcessing: boolean;
+  paymentError: string;
   onChange: (field: keyof BookingFormState, value: string | number) => void;
   onSubmit: () => void;
 };
@@ -27,6 +29,8 @@ export default function BookingPanel({
   nights,
   total,
   canSubmit,
+  isProcessing,
+  paymentError,
   onChange,
   onSubmit,
 }: BookingPanelProps) {
@@ -38,8 +42,8 @@ export default function BookingPanel({
       </p>
       <h3>Reserve {room.name}</h3>
       <p className="muted-text">
-        Fill in the details to calculate your stay and proceed to transaction
-        review.
+        Fill in the details to calculate your stay and complete the payment
+        securely with Razorpay.
       </p>
 
       <div className="booking-form">
@@ -123,12 +127,13 @@ export default function BookingPanel({
       <button
         className="primary-button full-width"
         type="button"
-        disabled={!canSubmit}
+        disabled={!canSubmit || isProcessing}
         onClick={onSubmit}
       >
         <PaymentIcon fontSize="small" />
-        Continue to transaction
+        {isProcessing ? "Opening payment" : "Pay now"}
       </button>
+      {paymentError ? <p className="payment-error">{paymentError}</p> : null}
     </aside>
   );
 }

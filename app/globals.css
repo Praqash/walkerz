@@ -587,7 +587,8 @@ button {
 }
 
 .auth-heading span,
-.auth-message {
+.auth-message,
+.payment-error {
     color: var(--muted);
     line-height: 1.6;
 }
@@ -626,6 +627,16 @@ button {
 
 .auth-message {
     margin: 16px 0 0;
+}
+
+.payment-error {
+    border: 1px solid #ead2a5;
+    border-radius: 14px;
+    background: #fff6e6;
+    color: #725018;
+    font-size: 0.9rem;
+    margin: 14px 0 0;
+    padding: 10px 12px;
 }
 
 .close-button {
@@ -678,6 +689,12 @@ button {
     background: var(--primary);
     color: white;
     padding: 14px 16px;
+}
+
+.transaction-id strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: right;
 }
 
 .transaction-id span {

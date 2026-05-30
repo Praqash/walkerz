@@ -18,4 +18,7 @@ export type BookingDetails = {
   nights: number;
   total: number;
   transactionId: string;
+  razorpayOrderId: string;
+  paymentId: string;
+  paidAt: string;
 };

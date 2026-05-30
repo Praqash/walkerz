@@ -16,6 +16,42 @@ type BookingFormState = {
   guests: number;
 };
 
+type RazorpayResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayCheckoutOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  prefill: {
+    name: string;
+    email: string;
+  };
+  theme: {
+    color: string;
+  };
+  handler: (response: RazorpayResponse) => void;
+  modal: {
+    ondismiss: () => void;
+  };
+};
+
+type RazorpayConstructor = new (options: RazorpayCheckoutOptions) => {
+  open: () => void;
+};
+
+declare global {
+  interface Window {
+    Razorpay?: RazorpayConstructor;
+  }
+}
+
 const initialFormState: BookingFormState = {
   guestName: "",
   email: "",
@@ -33,16 +69,44 @@ const getNights = (checkIn: string, checkOut: string) => {
   return difference > 0 ? Math.ceil(difference / 86400000) : 0;
 };
 
-const createTransactionId = () => `WLK-${Date.now().toString().slice(-8)}`;
+const loadRazorpayScript = () =>
+  new Promise<boolean>((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+
+const getResponseError = async (response: Response) => {
+  const data = await response.json().catch(() => null);
+  return data?.error ?? "Payment request failed. Please try again.";
+};
 
 export default function BookingExperience() {
   const [selectedRoom, setSelectedRoom] = useState<Room>(rooms[0]);
-  const [formState, setFormState] = useState<BookingFormState>(initialFormState);
+  const [formState, setFormState] =
+    useState<BookingFormState>(initialFormState);
   const [booking, setBooking] = useState<BookingDetails | null>(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
 
-  const nights = useMemo(() => getNights(formState.checkIn, formState.checkOut), [formState.checkIn, formState.checkOut]);
+  const nights = useMemo(
+    () => getNights(formState.checkIn, formState.checkOut),
+    [formState.checkIn, formState.checkOut],
+  );
   const total = nights * selectedRoom.pricePerNight;
-  const canSubmit = Boolean(formState.guestName.trim() && formState.email.trim() && nights > 0 && total > 0);
+  const canSubmit = Boolean(
+    formState.guestName.trim() &&
+    formState.email.trim() &&
+    nights > 0 &&
+    total > 0,
+  );
 
   const handleSelectRoom = (room: Room) => {
     setSelectedRoom(room);
@@ -52,26 +116,121 @@ export default function BookingExperience() {
     }));
   };
 
-  const handleFieldChange = (field: keyof BookingFormState, value: string | number) => {
+  const handleFieldChange = (
+    field: keyof BookingFormState,
+    value: string | number,
+  ) => {
     setFormState((current) => ({ ...current, [field]: value }));
   };
 
-  const handleSubmit = () => {
-    if (!canSubmit) {
+  const handleSubmit = async () => {
+    if (!canSubmit || isProcessingPayment) {
       return;
     }
 
-    setBooking({
-      room: selectedRoom,
-      guestName: formState.guestName.trim(),
-      email: formState.email.trim(),
-      checkIn: formState.checkIn,
-      checkOut: formState.checkOut,
-      guests: formState.guests,
-      nights,
-      total,
-      transactionId: createTransactionId(),
-    });
+    const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+
+    if (!razorpayKey) {
+      setPaymentError("Razorpay is not configured yet.");
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    setPaymentError("");
+
+    try {
+      const orderResponse = await fetch("/api/razorpay/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roomId: selectedRoom.id,
+          guestName: formState.guestName.trim(),
+          email: formState.email.trim(),
+          checkIn: formState.checkIn,
+          checkOut: formState.checkOut,
+          guests: formState.guests,
+        }),
+      });
+
+      if (!orderResponse.ok) {
+        throw new Error(await getResponseError(orderResponse));
+      }
+
+      const order = await orderResponse.json();
+      const isScriptLoaded = await loadRazorpayScript();
+
+      if (!isScriptLoaded || !window.Razorpay) {
+        throw new Error("Unable to load Razorpay Checkout. Please try again.");
+      }
+
+      const checkout = new window.Razorpay({
+        key: razorpayKey,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Walkerz",
+        description: `${selectedRoom.name} booking`,
+        order_id: order.orderId,
+        prefill: {
+          name: formState.guestName.trim(),
+          email: formState.email.trim(),
+        },
+        theme: {
+          color: "#324432",
+        },
+        handler: async (response) => {
+          try {
+            const verifyResponse = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(response),
+            });
+
+            if (!verifyResponse.ok) {
+              throw new Error(await getResponseError(verifyResponse));
+            }
+
+            setBooking({
+              room: selectedRoom,
+              guestName: formState.guestName.trim(),
+              email: formState.email.trim(),
+              checkIn: formState.checkIn,
+              checkOut: formState.checkOut,
+              guests: formState.guests,
+              nights: order.nights,
+              total: order.total,
+              transactionId: response.razorpay_payment_id,
+              razorpayOrderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id,
+              paidAt: new Date().toISOString(),
+            });
+          } catch (error) {
+            setPaymentError(
+              error instanceof Error
+                ? error.message
+                : "Payment verification failed.",
+            );
+          } finally {
+            setIsProcessingPayment(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setIsProcessingPayment(false);
+          },
+        },
+      });
+
+      checkout.open();
+    } catch (error) {
+      setPaymentError(
+        error instanceof Error ? error.message : "Unable to start payment.",
+      );
+      setIsProcessingPayment(false);
+    }
   };
 
   return (
@@ -83,7 +242,11 @@ export default function BookingExperience() {
             title="Pick the room that fits your Manali trip"
             description="Each room is configured from shared data so the listing, booking, and transaction details stay consistent."
           />
-          <RoomList rooms={rooms} selectedRoomId={selectedRoom.id} onSelectRoom={handleSelectRoom} />
+          <RoomList
+            rooms={rooms}
+            selectedRoomId={selectedRoom.id}
+            onSelectRoom={handleSelectRoom}
+          />
         </div>
 
         <BookingPanel
@@ -92,6 +255,8 @@ export default function BookingExperience() {
           nights={nights}
           total={total}
           canSubmit={canSubmit}
+          isProcessing={isProcessingPayment}
+          paymentError={paymentError}
           onChange={handleFieldChange}
           onSubmit={handleSubmit}
         />
