@@ -22,6 +22,14 @@ type RazorpayResponse = {
   razorpay_signature: string;
 };
 
+type RazorpayFailureResponse = {
+  error?: {
+    code?: string;
+    description?: string;
+    reason?: string;
+  };
+};
+
 type RazorpayCheckoutOptions = {
   key: string;
   amount: number;
@@ -44,6 +52,10 @@ type RazorpayCheckoutOptions = {
 
 type RazorpayConstructor = new (options: RazorpayCheckoutOptions) => {
   open: () => void;
+  on: (
+    event: "payment.failed",
+    handler: (response: RazorpayFailureResponse) => void,
+  ) => void;
 };
 
 declare global {
@@ -165,13 +177,15 @@ export default function BookingExperience() {
         throw new Error("Unable to load Razorpay Checkout. Please try again.");
       }
 
+      let hasCheckoutResolved = false;
+
       const checkout = new window.Razorpay({
         key: razorpayKey,
         amount: order.amount,
         currency: order.currency,
         name: "Walkerz",
         description: `${selectedRoom.name} booking`,
-        order_id: order.orderId,
+        order_id: order.order_id,
         prefill: {
           name: formState.guestName.trim(),
           email: formState.email.trim(),
@@ -180,6 +194,8 @@ export default function BookingExperience() {
           color: "#324432",
         },
         handler: async (response) => {
+          hasCheckoutResolved = true;
+
           try {
             const verifyResponse = await fetch("/api/razorpay/verify", {
               method: "POST",
@@ -200,8 +216,8 @@ export default function BookingExperience() {
               checkIn: formState.checkIn,
               checkOut: formState.checkOut,
               guests: formState.guests,
-              nights: order.nights,
-              total: order.total,
+              nights,
+              total,
               transactionId: response.razorpay_payment_id,
               razorpayOrderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
@@ -219,9 +235,23 @@ export default function BookingExperience() {
         },
         modal: {
           ondismiss: () => {
+            if (!hasCheckoutResolved) {
+              setPaymentError("Payment was cancelled before completion.");
+            }
+
             setIsProcessingPayment(false);
           },
         },
+      });
+
+      checkout.on("payment.failed", (response) => {
+        hasCheckoutResolved = true;
+        setPaymentError(
+          response.error?.description ??
+            response.error?.reason ??
+            "Payment failed. Please try again.",
+        );
+        setIsProcessingPayment(false);
       });
 
       checkout.open();
