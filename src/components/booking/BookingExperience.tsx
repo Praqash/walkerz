@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { rooms } from "@/data/rooms";
 import type { BookingDetails, Room } from "@/types/booking";
 import BookingPanel from "./BookingPanel";
+import { useAuth } from "@/components/auth/AuthProvider";
 import RoomList from "@/components/rooms/RoomList";
 import SectionHeader from "@/components/ui/SectionHeader";
 import TransactionSummary from "@/components/transaction/TransactionSummary";
@@ -101,12 +102,23 @@ const getResponseError = async (response: Response) => {
 };
 
 export default function BookingExperience() {
+  const { user } = useAuth();
   const [selectedRoom, setSelectedRoom] = useState<Room>(rooms[0]);
   const [formState, setFormState] =
     useState<BookingFormState>(initialFormState);
   const [booking, setBooking] = useState<BookingDetails | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [paymentError, setPaymentError] = useState("");
+
+  useEffect(() => {
+    if (!user?.email) {
+      return;
+    }
+
+    setFormState((current) =>
+      current.email ? current : { ...current, email: user.email ?? "" },
+    );
+  }, [user?.email]);
 
   const nights = useMemo(
     () => getNights(formState.checkIn, formState.checkOut),
