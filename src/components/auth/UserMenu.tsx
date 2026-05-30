@@ -31,7 +31,7 @@ export default function UserMenu() {
       <div className="auth-actions signed-in-actions">
         <span className="user-chip" title={displayName}>
           <AccountCircleIcon fontSize="small" />
-          {displayName}
+          <span className="user-chip-label">{displayName}</span>
         </span>
         <button
           className="secondary-button compact-button"

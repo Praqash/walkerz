@@ -207,10 +207,12 @@ button {
 
 .signed-in-actions {
     max-width: 360px;
+    min-width: 0;
 }
 
 .user-chip {
     max-width: 220px;
+    min-width: 0;
     gap: 8px;
     overflow: hidden;
     border: 1px solid var(--line);
@@ -228,6 +230,13 @@ button {
 .user-chip svg {
     flex: 0 0 auto;
     color: var(--accent);
+}
+
+.user-chip-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .skeleton-action {
@@ -826,13 +835,22 @@ button {
     }
 
     .signed-in-actions {
-        align-items: stretch;
-        flex-direction: column;
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .signed-in-actions .compact-button {
+        flex: 0 0 auto;
+        min-width: 104px;
     }
 
     .user-chip {
-        max-width: 100%;
-        width: 100%;
+        flex: 1 1 auto;
+        max-width: none;
+        width: auto;
     }
 }
 
@@ -856,6 +874,11 @@ button {
 
     .auth-tabs button {
         flex: 1;
+    }
+
+    .signed-in-actions .compact-button {
+        width: auto;
+        padding: 0 12px;
     }
 
     .hero-copy {
