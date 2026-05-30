@@ -22,3 +22,8 @@ export type BookingDetails = {
   paymentId: string;
   paidAt: string;
 };
+
+export type SavedBookingOrder = BookingDetails & {
+  id: string;
+  createdAt: string;
+};

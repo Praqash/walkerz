@@ -7,12 +7,14 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
 import AuthModal from "./AuthModal";
+import UserProfileModal from "./UserProfileModal";
 
 type AuthMode = "login" | "signup";
 
 export default function UserMenu() {
   const { user, isReady, logout } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [mode, setMode] = useState<AuthMode>("login");
 
   const openAuthModal = (nextMode: AuthMode) => {
@@ -29,7 +31,12 @@ export default function UserMenu() {
 
     return (
       <div className="auth-actions signed-in-actions">
-        <span className="user-chip" title={displayName}>
+        <button
+          className="user-chip"
+          type="button"
+          title={displayName}
+          onClick={() => setIsProfileOpen(true)}
+        >
           {user.photoURL ? (
             <span
               className="user-avatar"
@@ -40,7 +47,7 @@ export default function UserMenu() {
             <AccountCircleIcon fontSize="small" />
           )}
           <span className="user-chip-label">{displayName}</span>
-        </span>
+        </button>
         <button
           className="secondary-button compact-button"
           type="button"
@@ -49,6 +56,11 @@ export default function UserMenu() {
           <LogoutIcon fontSize="small" />
           <span className="logout-label">Logout</span>
         </button>
+        <UserProfileModal
+          isOpen={isProfileOpen}
+          user={user}
+          onClose={() => setIsProfileOpen(false)}
+        />
       </div>
     );
   }

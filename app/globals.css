@@ -601,6 +601,14 @@ button {
     width: min(560px, 100%);
 }
 
+.profile-card {
+    position: relative;
+    width: min(720px, 100%);
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    padding: 28px 24px 24px;
+}
+
 .auth-card {
     padding: 28px 24px 24px;
 }
@@ -628,6 +636,144 @@ button {
     background: white;
     color: var(--primary-dark);
     box-shadow: 0 8px 20px rgba(46, 36, 25, 0.08);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+    padding-right: 48px;
+}
+
+.profile-avatar {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-position: center;
+    background-size: cover;
+}
+
+.fallback-avatar {
+    display: inline-grid;
+    place-items: center;
+    background: var(--surface);
+    color: var(--accent);
+}
+
+.profile-header h2 {
+    margin: 0 0 6px;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.profile-header span {
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+
+.profile-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--surface);
+    margin-bottom: 18px;
+    padding: 6px;
+}
+
+.profile-tabs button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 800;
+}
+
+.profile-tabs button.active {
+    background: white;
+    color: var(--primary-dark);
+    box-shadow: 0 8px 20px rgba(46, 36, 25, 0.08);
+}
+
+.profile-panel {
+    display: grid;
+    gap: 12px;
+}
+
+.profile-detail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    padding: 12px 14px;
+}
+
+.profile-detail span,
+.order-meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.profile-detail strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: right;
+}
+
+.orders-panel {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.order-card {
+    display: grid;
+    gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: white;
+    padding: 16px;
+}
+
+.order-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.order-card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    letter-spacing: -0.03em;
+}
+
+.order-card-header > strong {
+    color: var(--primary-dark);
+    white-space: nowrap;
+}
+
+.order-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-weight: 700;
+}
+
+.support-panel .profile-detail {
+    background: white;
 }
 
 .auth-heading {
@@ -914,9 +1060,43 @@ button {
         padding: 26px 18px 20px;
     }
 
+    .profile-card {
+        width: min(100%, 520px);
+        max-height: calc(100dvh - 32px);
+        padding: 26px 18px 20px;
+    }
+
     .auth-card .close-button {
         top: 14px;
         right: 14px;
+    }
+
+    .profile-card .close-button {
+        top: 14px;
+        right: 14px;
+    }
+
+    .profile-header {
+        align-items: flex-start;
+        padding-right: 36px;
+    }
+
+    .profile-avatar {
+        width: 52px;
+        height: 52px;
+    }
+
+    .profile-tabs {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-detail,
+    .order-card-header {
+        flex-direction: column;
+    }
+
+    .profile-detail strong {
+        text-align: left;
     }
 
     .auth-tabs {

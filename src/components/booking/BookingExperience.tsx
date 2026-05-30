@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import RoomList from "@/components/rooms/RoomList";
 import SectionHeader from "@/components/ui/SectionHeader";
 import TransactionSummary from "@/components/transaction/TransactionSummary";
+import { saveBookingOrder } from "@/utils/bookingOrders";
 
 type BookingFormState = {
   guestName: string;
@@ -248,7 +249,7 @@ export default function BookingExperience() {
               throw new Error(await getResponseError(verifyResponse));
             }
 
-            setBooking({
+            const confirmedBooking = {
               rooms: selectedRooms,
               guestName: formState.guestName.trim(),
               email: formState.email.trim(),
@@ -261,7 +262,13 @@ export default function BookingExperience() {
               razorpayOrderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
               paidAt: new Date().toISOString(),
-            });
+            };
+
+            setBooking(confirmedBooking);
+
+            if (user) {
+              await saveBookingOrder(user, confirmedBooking);
+            }
           } catch (error) {
             setPaymentError(
               error instanceof Error
