@@ -30,7 +30,15 @@ export default function UserMenu() {
     return (
       <div className="auth-actions signed-in-actions">
         <span className="user-chip" title={displayName}>
-          <AccountCircleIcon fontSize="small" />
+          {user.photoURL ? (
+            <span
+              className="user-avatar"
+              style={{ backgroundImage: `url(${user.photoURL})` }}
+              aria-hidden="true"
+            />
+          ) : (
+            <AccountCircleIcon fontSize="small" />
+          )}
           <span className="user-chip-label">{displayName}</span>
         </span>
         <button
