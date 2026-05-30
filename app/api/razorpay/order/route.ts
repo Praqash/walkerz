@@ -22,17 +22,25 @@ const getNights = (checkIn: string, checkOut: string) => {
   return difference > 0 ? Math.ceil(difference / 86400000) : 0;
 };
 
+const hotelTimeZone = "Asia/Kolkata";
+
+const getTodayDateValue = () => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: hotelTimeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  return `${year}-${month}-${day}`;
+};
+
 const isPastDate = (date: string) => {
-  if (!date) {
-    return false;
-  }
-
-  const selectedDate = new Date(date);
-  selectedDate.setHours(0, 0, 0, 0);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  return selectedDate.getTime() < today.getTime();
+  return Boolean(date && date < getTodayDateValue());
 };
 
 const isValidEmail = (email: string) =>
