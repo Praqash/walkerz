@@ -608,10 +608,6 @@ button {
     margin: 16px 0 0;
 }
 
-#recaptcha-container {
-    min-height: 0;
-}
-
 .close-button {
     position: absolute;
     top: 18px;

@@ -25,13 +25,22 @@ export default function UserMenu() {
   }
 
   if (user) {
+    const displayName =
+      typeof user.user_metadata.name === "string"
+        ? user.user_metadata.name
+        : (user.email ?? user.phone ?? "Guest");
+
     return (
       <div className="auth-actions signed-in-actions">
-        <span className="user-chip" title={user.email ?? user.phoneNumber ?? "Signed in user"}>
+        <span className="user-chip" title={displayName}>
           <AccountCircleIcon fontSize="small" />
-          {user.displayName ?? user.email ?? user.phoneNumber ?? "Guest"}
+          {displayName}
         </span>
-        <button className="secondary-button compact-button" type="button" onClick={logout}>
+        <button
+          className="secondary-button compact-button"
+          type="button"
+          onClick={logout}
+        >
           <LogoutIcon fontSize="small" />
           Logout
         </button>
@@ -41,15 +50,27 @@ export default function UserMenu() {
 
   return (
     <div className="auth-actions">
-      <button className="secondary-button compact-button" type="button" onClick={() => openAuthModal("login")}>
+      <button
+        className="secondary-button compact-button"
+        type="button"
+        onClick={() => openAuthModal("login")}
+      >
         <LoginIcon fontSize="small" />
         Login
       </button>
-      <button className="primary-button compact-button" type="button" onClick={() => openAuthModal("signup")}>
+      <button
+        className="primary-button compact-button"
+        type="button"
+        onClick={() => openAuthModal("signup")}
+      >
         <PersonAddIcon fontSize="small" />
         Sign up
       </button>
-      <AuthModal isOpen={isModalOpen} initialMode={mode} onClose={() => setIsModalOpen(false)} />
+      <AuthModal
+        isOpen={isModalOpen}
+        initialMode={mode}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
