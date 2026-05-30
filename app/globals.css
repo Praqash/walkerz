@@ -702,6 +702,7 @@ button {
     .header-content {
         gap: 12px;
         padding: 14px 0;
+        position: relative;
     }
 
     .header-actions,
@@ -838,18 +839,23 @@ button {
         align-items: center;
         flex-direction: row;
         flex-wrap: nowrap;
-        max-width: 100%;
-        width: 100%;
+        justify-content: flex-end;
+        max-width: none;
+        position: absolute;
+        top: 14px;
+        right: 0;
+        left: 122px;
+        width: auto;
     }
 
     .signed-in-actions .compact-button {
         flex: 0 0 auto;
-        min-width: 104px;
+        min-width: 98px;
     }
 
     .user-chip {
-        flex: 1 1 auto;
-        max-width: none;
+        flex: 0 1 auto;
+        max-width: 180px;
         width: auto;
     }
 }
@@ -876,9 +882,20 @@ button {
         flex: 1;
     }
 
+    .signed-in-actions {
+        left: 112px;
+        gap: 6px;
+    }
+
     .signed-in-actions .compact-button {
+        min-width: 0;
         width: auto;
-        padding: 0 12px;
+        padding: 0 10px;
+    }
+
+    .user-chip {
+        max-width: 138px;
+        padding: 0 10px;
     }
 
     .hero-copy {
