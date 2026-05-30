@@ -19,6 +19,8 @@ type BookingPanelProps = {
   formState: BookingFormState;
   nights: number;
   pricePerNight: number;
+  minCheckInDate: string;
+  minCheckOutDate: string;
   total: number;
   canSubmit: boolean;
   isProcessing: boolean;
@@ -32,6 +34,8 @@ export default function BookingPanel({
   formState,
   nights,
   pricePerNight,
+  minCheckInDate,
+  minCheckOutDate,
   total,
   canSubmit,
   isProcessing,
@@ -111,6 +115,7 @@ export default function BookingPanel({
               className="fancy-date-input"
               type="date"
               value={formState.checkIn}
+              min={minCheckInDate}
               onChange={(event) => onChange("checkIn", event.target.value)}
             />
           </div>
@@ -121,6 +126,7 @@ export default function BookingPanel({
               className="fancy-date-input"
               type="date"
               value={formState.checkOut}
+              min={minCheckOutDate}
               onChange={(event) => onChange("checkOut", event.target.value)}
             />
           </div>

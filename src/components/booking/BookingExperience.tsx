@@ -83,6 +83,25 @@ const getNights = (checkIn: string, checkOut: string) => {
   return difference > 0 ? Math.ceil(difference / 86400000) : 0;
 };
 
+const getTodayDateValue = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today.toLocaleDateString("en-CA");
+};
+
+const isPastDate = (date: string) => {
+  if (!date) {
+    return false;
+  }
+
+  const selectedDate = new Date(date);
+  selectedDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return selectedDate.getTime() < today.getTime();
+};
+
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
@@ -128,6 +147,8 @@ export default function BookingExperience() {
     () => getNights(formState.checkIn, formState.checkOut),
     [formState.checkIn, formState.checkOut],
   );
+  const minCheckInDate = useMemo(() => getTodayDateValue(), []);
+  const minCheckOutDate = formState.checkIn || minCheckInDate;
   const pricePerNight = selectedRooms.reduce(
     (sum, room) => sum + room.pricePerNight,
     0,
@@ -137,6 +158,8 @@ export default function BookingExperience() {
     selectedRooms.length > 0 &&
     formState.guestName.trim() &&
     isValidEmail(formState.email) &&
+    !isPastDate(formState.checkIn) &&
+    !isPastDate(formState.checkOut) &&
     nights > 0 &&
     total > 0,
   );
@@ -165,13 +188,29 @@ export default function BookingExperience() {
     field: keyof BookingFormState,
     value: string | number,
   ) => {
-    setFormState((current) => ({ ...current, [field]: value }));
+    setFormState((current) => {
+      if (
+        field === "checkIn" &&
+        typeof value === "string" &&
+        current.checkOut &&
+        new Date(current.checkOut).getTime() < new Date(value).getTime()
+      ) {
+        return { ...current, checkIn: value, checkOut: "" };
+      }
+
+      return { ...current, [field]: value };
+    });
   };
 
   const handleSubmit = async () => {
     if (!canSubmit || isProcessingPayment) {
       if (!isValidEmail(formState.email)) {
         setPaymentError("Enter a valid email address.");
+      } else if (
+        isPastDate(formState.checkIn) ||
+        isPastDate(formState.checkOut)
+      ) {
+        setPaymentError("Check-in and check-out dates cannot be in the past.");
       }
 
       return;
@@ -329,6 +368,8 @@ export default function BookingExperience() {
           formState={formState}
           nights={nights}
           pricePerNight={pricePerNight}
+          minCheckInDate={minCheckInDate}
+          minCheckOutDate={minCheckOutDate}
           total={total}
           canSubmit={canSubmit}
           isProcessing={isProcessingPayment}

@@ -22,6 +22,19 @@ const getNights = (checkIn: string, checkOut: string) => {
   return difference > 0 ? Math.ceil(difference / 86400000) : 0;
 };
 
+const isPastDate = (date: string) => {
+  if (!date) {
+    return false;
+  }
+
+  const selectedDate = new Date(date);
+  selectedDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return selectedDate.getTime() < today.getTime();
+};
+
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
@@ -86,6 +99,13 @@ export async function POST(request: Request) {
   }
 
   const nights = getNights(checkIn, checkOut);
+
+  if (isPastDate(checkIn) || isPastDate(checkOut)) {
+    return NextResponse.json(
+      { error: "Check-in and check-out dates cannot be in the past." },
+      { status: 400 },
+    );
+  }
 
   if (nights < 1) {
     return NextResponse.json(
