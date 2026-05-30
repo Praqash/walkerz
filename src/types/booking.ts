@@ -27,3 +27,12 @@ export type SavedBookingOrder = BookingDetails & {
   id: string;
   createdAt: string;
 };
+
+export type RoomBookingAvailability = {
+  roomId: string;
+  roomName: string;
+  checkIn: string;
+  checkOut: string;
+  paymentId: string;
+  paidAt: string;
+};

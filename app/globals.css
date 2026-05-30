@@ -735,6 +735,7 @@ button {
 
 .room-meta,
 .feature-list,
+.room-actions,
 .form-row {
     display: flex;
     gap: 12px;
@@ -748,6 +749,15 @@ button {
 
 .feature-list {
     gap: 8px;
+}
+
+.room-actions {
+    align-items: center;
+}
+
+.room-actions .primary-button,
+.room-actions .secondary-button {
+    flex: 1 1 180px;
 }
 
 .feature-pill {
@@ -817,7 +827,8 @@ button {
 }
 
 .transaction-backdrop,
-.auth-backdrop {
+.auth-backdrop,
+.availability-backdrop {
     position: fixed;
     inset: 0;
     z-index: 30;
@@ -830,6 +841,10 @@ button {
 .auth-backdrop {
     z-index: 40;
     min-height: 100dvh;
+}
+
+.availability-backdrop {
+    z-index: 35;
 }
 
 .transaction-card,
@@ -848,6 +863,116 @@ button {
 
 .auth-card {
     padding: 28px 24px 24px;
+}
+
+.availability-card {
+    position: relative;
+    width: min(720px, 100%);
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    padding: 28px 24px 24px;
+}
+
+.availability-heading {
+    padding-right: 48px;
+}
+
+.availability-heading h2 {
+    margin: 0 0 8px;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.availability-heading span {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.availability-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.availability-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.availability-legend i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.available-dot {
+    background: var(--primary);
+}
+
+.booked-dot {
+    background: #b25f46;
+}
+
+.availability-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.calendar-weekday {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.calendar-spacer {
+    min-height: 56px;
+}
+
+.calendar-tile {
+    display: grid;
+    gap: 3px;
+    min-height: 58px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: white;
+    color: var(--primary-dark);
+    padding: 7px 4px;
+    text-align: center;
+}
+
+.calendar-tile strong {
+    font-size: 1rem;
+}
+
+.calendar-tile span {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.calendar-tile.available {
+    border-color: rgba(50, 68, 50, 0.28);
+    background: #f3f7f1;
+}
+
+.calendar-tile.booked {
+    border-color: #efc8bb;
+    background: #fff1ec;
+    color: #8a3d28;
+    cursor: not-allowed;
+}
+
+.calendar-tile.booked span {
+    color: #8a3d28;
 }
 
 .auth-tabs {
@@ -1303,6 +1428,30 @@ button {
         max-height: calc(100dvh - 32px);
         overflow-y: auto;
         padding: 26px 18px 20px;
+    }
+
+    .availability-card {
+        width: min(100%, 520px);
+        max-height: calc(100dvh - 32px);
+        padding: 24px 16px 18px;
+    }
+
+    .availability-card .close-button {
+        top: 14px;
+        right: 14px;
+    }
+
+    .availability-calendar {
+        gap: 6px;
+    }
+
+    .calendar-tile {
+        min-height: 52px;
+        border-radius: 12px;
+    }
+
+    .calendar-tile span {
+        font-size: 0.66rem;
     }
 
     .profile-card {

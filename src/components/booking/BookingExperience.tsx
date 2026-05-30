@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import RoomList from "@/components/rooms/RoomList";
 import SectionHeader from "@/components/ui/SectionHeader";
 import TransactionSummary from "@/components/transaction/TransactionSummary";
+import { getTodayDateValue, isPastDate } from "@/utils/bookingDates";
 import { saveBookingOrder } from "@/utils/bookingOrders";
 
 type BookingFormState = {
@@ -81,27 +82,6 @@ const getNights = (checkIn: string, checkOut: string) => {
 
   const difference = new Date(checkOut).getTime() - new Date(checkIn).getTime();
   return difference > 0 ? Math.ceil(difference / 86400000) : 0;
-};
-
-const hotelTimeZone = "Asia/Kolkata";
-
-const getTodayDateValue = () => {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: hotelTimeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(new Date());
-
-  const year = parts.find((part) => part.type === "year")?.value;
-  const month = parts.find((part) => part.type === "month")?.value;
-  const day = parts.find((part) => part.type === "day")?.value;
-
-  return `${year}-${month}-${day}`;
-};
-
-const isPastDate = (date: string) => {
-  return Boolean(date && date < getTodayDateValue());
 };
 
 const isValidEmail = (email: string) =>

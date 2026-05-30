@@ -5,9 +5,14 @@ import {
   getDocs,
   orderBy,
   query,
+  where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { BookingDetails, SavedBookingOrder } from "@/types/booking";
+import type {
+  BookingDetails,
+  RoomBookingAvailability,
+  SavedBookingOrder,
+} from "@/types/booking";
 
 const getStorageKey = (userId: string) => `walkerz_orders_${userId}`;
 
@@ -71,10 +76,29 @@ export const saveBookingOrder = async (
     return order;
   }
 
+  const firestore = db;
+
   try {
-    await addDoc(collection(db, "users", user.uid, "orders"), order);
+    await addDoc(collection(firestore, "users", user.uid, "orders"), order);
   } catch {
-    return order;
+    // The local copy is already saved; keep the payment success flow unblocked.
+  }
+
+  try {
+    await Promise.all(
+      booking.rooms.map((room) =>
+        addDoc(collection(firestore, "roomBookings"), {
+          roomId: room.id,
+          roomName: room.name,
+          checkIn: booking.checkIn,
+          checkOut: booking.checkOut,
+          paymentId: booking.paymentId,
+          paidAt: booking.paidAt,
+        } satisfies RoomBookingAvailability),
+      ),
+    );
+  } catch {
+    // Availability sync is best-effort from the browser client.
   }
 
   return order;
@@ -102,5 +126,21 @@ export const getBookingOrders = async (user: User) => {
     return mergeOrders([...firestoreOrders, ...localOrders]);
   } catch {
     return localOrders;
+  }
+};
+
+export const getRoomBookingAvailability = async (roomId: string) => {
+  if (!db) {
+    return [];
+  }
+
+  try {
+    const snapshot = await getDocs(
+      query(collection(db, "roomBookings"), where("roomId", "==", roomId)),
+    );
+
+    return snapshot.docs.map((doc) => doc.data() as RoomBookingAvailability);
+  } catch {
+    return [];
   }
 };
