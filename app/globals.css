@@ -1056,7 +1056,7 @@ button {
         padding: 14px 0;
     }
 
-    .brand {
+    .site-header .brand {
         grid-area: brand;
     }
 
