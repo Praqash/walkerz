@@ -22,6 +22,9 @@ const getNights = (checkIn: string, checkOut: string) => {
   return difference > 0 ? Math.ceil(difference / 86400000) : 0;
 };
 
+const isValidEmail = (email: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
 export async function POST(request: Request) {
   if (!razorpay) {
     return NextResponse.json(
@@ -50,6 +53,13 @@ export async function POST(request: Request) {
   if (!guestName || !email) {
     return NextResponse.json(
       { error: "Guest name and email are required." },
+      { status: 400 },
+    );
+  }
+
+  if (!isValidEmail(email)) {
+    return NextResponse.json(
+      { error: "Enter a valid email address." },
       { status: 400 },
     );
   }

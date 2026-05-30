@@ -82,6 +82,9 @@ const getNights = (checkIn: string, checkOut: string) => {
   return difference > 0 ? Math.ceil(difference / 86400000) : 0;
 };
 
+const isValidEmail = (email: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
 const loadRazorpayScript = () =>
   new Promise<boolean>((resolve) => {
     if (window.Razorpay) {
@@ -127,7 +130,7 @@ export default function BookingExperience() {
   const total = nights * selectedRoom.pricePerNight;
   const canSubmit = Boolean(
     formState.guestName.trim() &&
-    formState.email.trim() &&
+    isValidEmail(formState.email) &&
     nights > 0 &&
     total > 0,
   );
@@ -149,6 +152,10 @@ export default function BookingExperience() {
 
   const handleSubmit = async () => {
     if (!canSubmit || isProcessingPayment) {
+      if (!isValidEmail(formState.email)) {
+        setPaymentError("Enter a valid email address.");
+      }
+
       return;
     }
 
