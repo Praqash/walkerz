@@ -4,9 +4,9 @@ import UserMenu from "@/components/auth/UserMenu";
 const navItems = [
   { label: "Rooms", href: "#rooms" },
   { label: "Booking", href: "#booking" },
-  { label: "Transaction", href: "#transaction" },
   { label: "Gallery", href: "#gallery" },
   { label: "Map", href: "#map" },
+  { label: "Support", href: "#support" },
 ];
 
 export default function SiteHeader() {

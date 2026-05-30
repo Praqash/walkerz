@@ -3,8 +3,9 @@ import MapIcon from "@mui/icons-material/Map";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 const googleMapsLink = "https://maps.app.goo.gl/JPJv4i3eM3F6pQ758?g_st=am";
+const mapCoordinates = "26.82942475,80.9960207";
 const mapEmbedUrl =
-  "https://www.google.com/maps?q=Walkerz%20Manali&output=embed";
+  `https://maps.google.com/maps?q=${mapCoordinates}&ll=${mapCoordinates}&z=16&output=embed`;
 
 export default function MapSection() {
   return (
@@ -19,7 +20,7 @@ export default function MapSection() {
         <div className="map-layout">
           <div className="map-frame card">
             <iframe
-              title="Walkerz location on Google Maps"
+              title="Walkerz centered location on Google Maps"
               src={mapEmbedUrl}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
