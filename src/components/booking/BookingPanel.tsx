@@ -64,7 +64,7 @@ export default function BookingPanel({
             id="email"
             type="email"
             value={formState.email}
-            onChange={(event) => onChange("email", event.target.value)}
+            readOnly
             placeholder="you@example.com"
           />
         </div>
