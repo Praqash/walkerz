@@ -2,11 +2,13 @@ import DirectionsIcon from "@mui/icons-material/Directions";
 import MapIcon from "@mui/icons-material/Map";
 import SectionHeader from "@/components/ui/SectionHeader";
 
-const mapCoordinates = "26.82942475,80.9960207";
+const mapQuery =
+  "Footsteps Hostel and Cafe, village ghosal, Old Manali, Himachal Pradesh 175103";
+const encodedMapQuery = encodeURIComponent(mapQuery);
 const googleMapsLink =
-  "https://www.google.com/maps/place/Footsteps+Hostel+and+Cafe/@26.82942475,80.9960207,16z/data=!4m2!3m1!1s0x3904872e14e0ee1d:0x3ef650f083866127";
+  `https://www.google.com/maps/search/?api=1&query=${encodedMapQuery}`;
 const mapEmbedUrl =
-  `https://maps.google.com/maps?hl=en&q=${mapCoordinates}&ll=${mapCoordinates}&z=16&iwloc=B&output=embed`;
+  `https://www.google.com/maps?q=${encodedMapQuery}&ftid=0x3904872e14e0ee1d:0x3ef650f083866127&z=16&output=embed`;
 
 export default function MapSection() {
   return (

@@ -1,5 +1,8 @@
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PaymentIcon from "@mui/icons-material/Payment";
+import PersonIcon from "@mui/icons-material/Person";
+import { useEffect, useRef, useState } from "react";
 import type { Room } from "@/types/booking";
 import { formatCurrency } from "@/utils/currency";
 
@@ -36,16 +39,34 @@ export default function BookingPanel({
   onChange,
   onSubmit,
 }: BookingPanelProps) {
+  const [isGuestsOpen, setIsGuestsOpen] = useState(false);
+  const guestDropdownRef = useRef<HTMLDivElement>(null);
+  const hasSelectedRooms = rooms.length > 0;
   const maxGuests = Math.max(
     1,
     rooms.reduce((sum, room) => sum + room.maxGuests, 0),
   );
+  const guestOptions = Array.from({ length: maxGuests }, (_, index) => index + 1);
   const roomLabel =
     rooms.length === 0
       ? "a room"
       : rooms.length === 1
         ? rooms[0].name
         : `${rooms.length} selected rooms`;
+
+  useEffect(() => {
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (
+        guestDropdownRef.current &&
+        !guestDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsGuestsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleDocumentClick);
+    return () => document.removeEventListener("mousedown", handleDocumentClick);
+  }, []);
 
   return (
     <aside id="booking" className="booking-panel card">
@@ -87,6 +108,7 @@ export default function BookingPanel({
             <label htmlFor="checkIn">Check-in</label>
             <input
               id="checkIn"
+              className="fancy-date-input"
               type="date"
               value={formState.checkIn}
               onChange={(event) => onChange("checkIn", event.target.value)}
@@ -96,6 +118,7 @@ export default function BookingPanel({
             <label htmlFor="checkOut">Check-out</label>
             <input
               id="checkOut"
+              className="fancy-date-input"
               type="date"
               value={formState.checkOut}
               onChange={(event) => onChange("checkOut", event.target.value)}
@@ -103,22 +126,65 @@ export default function BookingPanel({
           </div>
         </div>
 
-        <div className="input-group">
+        <div
+          className="input-group"
+          title={hasSelectedRooms ? undefined : "Please select room to add guest"}
+        >
           <label htmlFor="guests">Guests</label>
-          <select
-            id="guests"
-            value={formState.guests}
-            onChange={(event) => onChange("guests", Number(event.target.value))}
+          <div
+            className={`fancy-select ${isGuestsOpen ? "open" : ""}`}
+            ref={guestDropdownRef}
           >
-            {Array.from(
-              { length: maxGuests },
-              (_, index) => index + 1,
-            ).map((guestCount) => (
-              <option key={guestCount} value={guestCount}>
-                {guestCount} {guestCount === 1 ? "guest" : "guests"}
-              </option>
-            ))}
-          </select>
+            <button
+              id="guests"
+              className="fancy-select-trigger"
+              type="button"
+              disabled={!hasSelectedRooms}
+              aria-haspopup="listbox"
+              aria-expanded={isGuestsOpen}
+              aria-describedby={!hasSelectedRooms ? "guestsHelp" : undefined}
+              onClick={() => setIsGuestsOpen((current) => !current)}
+            >
+              <span className="icon-text">
+                <PersonIcon fontSize="small" />
+                {formState.guests}{" "}
+                {formState.guests === 1 ? "guest" : "guests"}
+              </span>
+              <ExpandMoreIcon fontSize="small" />
+            </button>
+
+            {isGuestsOpen && hasSelectedRooms ? (
+              <div className="fancy-select-menu" role="listbox" aria-label="Guests">
+                {guestOptions.map((guestCount) => (
+                  <button
+                    key={guestCount}
+                    className={
+                      formState.guests === guestCount ? "active" : undefined
+                    }
+                    type="button"
+                    role="option"
+                    aria-selected={formState.guests === guestCount}
+                    onClick={() => {
+                      onChange("guests", guestCount);
+                      setIsGuestsOpen(false);
+                    }}
+                  >
+                    <span>
+                      {guestCount} {guestCount === 1 ? "guest" : "guests"}
+                    </span>
+                    <small>
+                      {guestCount === 1 ? "Solo stay" : "Group stay"}
+                    </small>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          {!hasSelectedRooms ? (
+            <span id="guestsHelp" className="field-help">
+              Please select room to add guest
+            </span>
+          ) : null}
         </div>
       </div>
 

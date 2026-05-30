@@ -137,6 +137,123 @@ button {
     padding: 0 14px;
 }
 
+.input-group input:disabled,
+.input-group select:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
+}
+
+.field-help {
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+
+.fancy-date-input {
+    color-scheme: light;
+    font-weight: 700;
+}
+
+.fancy-date-input::-webkit-calendar-picker-indicator {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--surface);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.fancy-date-input::-webkit-calendar-picker-indicator:hover {
+    background-color: #eee5d8;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.fancy-select-trigger:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(199, 155, 98, 0.16);
+    outline: none;
+}
+
+.fancy-select {
+    position: relative;
+}
+
+.fancy-select-trigger {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: white;
+    color: var(--text);
+    padding: 0 12px 0 14px;
+    text-align: left;
+}
+
+.fancy-select-trigger svg {
+    color: var(--accent);
+    flex: 0 0 auto;
+    transition: transform 180ms ease;
+}
+
+.fancy-select.open .fancy-select-trigger > svg:last-child {
+    transform: rotate(180deg);
+}
+
+.fancy-select-trigger:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
+}
+
+.fancy-select-menu {
+    position: absolute;
+    z-index: 15;
+    inset: calc(100% + 8px) 0 auto;
+    display: grid;
+    gap: 6px;
+    max-height: 240px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: white;
+    box-shadow: var(--shadow);
+    padding: 8px;
+}
+
+.fancy-select-menu button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 48px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text);
+    padding: 8px 10px;
+    text-align: left;
+}
+
+.fancy-select-menu button:hover,
+.fancy-select-menu button.active {
+    background: var(--surface);
+    color: var(--primary-dark);
+}
+
+.fancy-select-menu span {
+    font-weight: 800;
+}
+
+.fancy-select-menu small {
+    color: var(--muted);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
 .site-header {
     position: sticky;
     top: 0;

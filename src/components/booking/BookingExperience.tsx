@@ -316,7 +316,6 @@ export default function BookingExperience() {
           <SectionHeader
             eyebrow="Available rooms"
             title="Pick the rooms that fit your Manali trip"
-            description="Each room is configured from shared data so the listing, booking, and transaction details stay consistent."
           />
           <RoomList
             rooms={rooms}

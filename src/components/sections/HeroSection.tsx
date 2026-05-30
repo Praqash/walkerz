@@ -11,10 +11,6 @@ export default function HeroSection() {
             Manali homestay hotel
           </p>
           <h1>Book a quiet stay at Walkerz in Manali.</h1>
-          <p>
-            Browse available rooms, reserve your preferred stay, and review the
-            transaction details in a simple booking flow.
-          </p>
           <a className="primary-button" href="#booking">
             <CalendarMonthIcon fontSize="small" />
             Start booking
