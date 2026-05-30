@@ -106,7 +106,7 @@ const getResponseError = async (response: Response) => {
 
 export default function BookingExperience() {
   const { user } = useAuth();
-  const [selectedRoom, setSelectedRoom] = useState<Room>(rooms[0]);
+  const [selectedRooms, setSelectedRooms] = useState<Room[]>([]);
   const [formState, setFormState] =
     useState<BookingFormState>(initialFormState);
   const [booking, setBooking] = useState<BookingDetails | null>(null);
@@ -127,20 +127,37 @@ export default function BookingExperience() {
     () => getNights(formState.checkIn, formState.checkOut),
     [formState.checkIn, formState.checkOut],
   );
-  const total = nights * selectedRoom.pricePerNight;
+  const pricePerNight = selectedRooms.reduce(
+    (sum, room) => sum + room.pricePerNight,
+    0,
+  );
+  const total = nights * pricePerNight;
   const canSubmit = Boolean(
+    selectedRooms.length > 0 &&
     formState.guestName.trim() &&
     isValidEmail(formState.email) &&
     nights > 0 &&
     total > 0,
   );
 
-  const handleSelectRoom = (room: Room) => {
-    setSelectedRoom(room);
-    setFormState((current) => ({
-      ...current,
-      guests: Math.min(current.guests, room.maxGuests),
-    }));
+  const handleToggleRoom = (room: Room) => {
+    setSelectedRooms((current) => {
+      const isSelected = current.some((selected) => selected.id === room.id);
+      const nextRooms = isSelected
+        ? current.filter((selected) => selected.id !== room.id)
+        : [...current, room];
+      const nextMaxGuests = nextRooms.reduce(
+        (sum, selected) => sum + selected.maxGuests,
+        0,
+      );
+
+      setFormState((currentForm) => ({
+        ...currentForm,
+        guests: Math.max(1, Math.min(currentForm.guests, nextMaxGuests || 1)),
+      }));
+
+      return nextRooms;
+    });
   };
 
   const handleFieldChange = (
@@ -176,7 +193,7 @@ export default function BookingExperience() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          roomId: selectedRoom.id,
+          roomIds: selectedRooms.map((room) => room.id),
           guestName: formState.guestName.trim(),
           email: formState.email.trim(),
           checkIn: formState.checkIn,
@@ -203,7 +220,10 @@ export default function BookingExperience() {
         amount: order.amount,
         currency: order.currency,
         name: "Walkerz",
-        description: `${selectedRoom.name} booking`,
+        description:
+          selectedRooms.length === 1
+            ? `${selectedRooms[0].name} booking`
+            : `${selectedRooms.length} room booking`,
         order_id: order.order_id,
         prefill: {
           name: formState.guestName.trim(),
@@ -229,7 +249,7 @@ export default function BookingExperience() {
             }
 
             setBooking({
-              room: selectedRoom,
+              rooms: selectedRooms,
               guestName: formState.guestName.trim(),
               email: formState.email.trim(),
               checkIn: formState.checkIn,
@@ -288,20 +308,21 @@ export default function BookingExperience() {
         <div id="rooms">
           <SectionHeader
             eyebrow="Available rooms"
-            title="Pick the room that fits your Manali trip"
+            title="Pick the rooms that fit your Manali trip"
             description="Each room is configured from shared data so the listing, booking, and transaction details stay consistent."
           />
           <RoomList
             rooms={rooms}
-            selectedRoomId={selectedRoom.id}
-            onSelectRoom={handleSelectRoom}
+            selectedRoomIds={selectedRooms.map((room) => room.id)}
+            onToggleRoom={handleToggleRoom}
           />
         </div>
 
         <BookingPanel
-          room={selectedRoom}
+          rooms={selectedRooms}
           formState={formState}
           nights={nights}
+          pricePerNight={pricePerNight}
           total={total}
           canSubmit={canSubmit}
           isProcessing={isProcessingPayment}

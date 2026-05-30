@@ -10,7 +10,7 @@ type TransactionSummaryProps = {
 };
 
 const summaryRows = (booking: BookingDetails) => [
-  ["Room", booking.room.name],
+  ["Rooms", booking.rooms.map((room) => room.name).join(", ")],
   ["Guest", booking.guestName],
   ["Email", booking.email],
   ["Stay", `${booking.checkIn} to ${booking.checkOut}`],

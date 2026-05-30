@@ -3,15 +3,24 @@ import RoomCard from "./RoomCard";
 
 type RoomListProps = {
   rooms: Room[];
-  selectedRoomId: string;
-  onSelectRoom: (room: Room) => void;
+  selectedRoomIds: string[];
+  onToggleRoom: (room: Room) => void;
 };
 
-export default function RoomList({ rooms, selectedRoomId, onSelectRoom }: RoomListProps) {
+export default function RoomList({
+  rooms,
+  selectedRoomIds,
+  onToggleRoom,
+}: RoomListProps) {
   return (
     <div className="room-list">
       {rooms.map((room) => (
-        <RoomCard key={room.id} room={room} isSelected={room.id === selectedRoomId} onSelect={onSelectRoom} />
+        <RoomCard
+          key={room.id}
+          room={room}
+          isSelected={selectedRoomIds.includes(room.id)}
+          onSelect={onToggleRoom}
+        />
       ))}
     </div>
   );

@@ -34,18 +34,30 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const roomId = typeof body.roomId === "string" ? body.roomId : "";
+  const roomIds = Array.isArray(body.roomIds)
+    ? body.roomIds.filter(
+        (roomId: unknown): roomId is string => typeof roomId === "string",
+      )
+    : typeof body.roomId === "string"
+      ? [body.roomId]
+      : [];
+  const uniqueRoomIds = Array.from(new Set(roomIds));
   const guestName =
     typeof body.guestName === "string" ? body.guestName.trim() : "";
   const email = typeof body.email === "string" ? body.email.trim() : "";
   const checkIn = typeof body.checkIn === "string" ? body.checkIn : "";
   const checkOut = typeof body.checkOut === "string" ? body.checkOut : "";
   const guests = Number(body.guests);
-  const room = rooms.find((candidate) => candidate.id === roomId);
+  const selectedRooms = uniqueRoomIds
+    .map((roomId) => rooms.find((candidate) => candidate.id === roomId))
+    .filter((room): room is (typeof rooms)[number] => Boolean(room));
 
-  if (!room) {
+  if (
+    selectedRooms.length === 0 ||
+    selectedRooms.length !== uniqueRoomIds.length
+  ) {
     return NextResponse.json(
-      { error: "Selected room was not found." },
+      { error: "One or more selected rooms were not found." },
       { status: 400 },
     );
   }
@@ -64,9 +76,11 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!Number.isInteger(guests) || guests < 1 || guests > room.maxGuests) {
+  const maxGuests = selectedRooms.reduce((sum, room) => sum + room.maxGuests, 0);
+
+  if (!Number.isInteger(guests) || guests < 1 || guests > maxGuests) {
     return NextResponse.json(
-      { error: "Guest count is not valid for this room." },
+      { error: "Guest count is not valid for the selected rooms." },
       { status: 400 },
     );
   }
@@ -80,7 +94,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const amount = nights * room.pricePerNight * 100;
+  const pricePerNight = selectedRooms.reduce(
+    (sum, room) => sum + room.pricePerNight,
+    0,
+  );
+  const amount = nights * pricePerNight * 100;
 
   try {
     const order = await razorpay.orders.create({
@@ -88,7 +106,8 @@ export async function POST(request: Request) {
       currency: "INR",
       receipt: `walkerz_${Date.now()}`,
       notes: {
-        roomId,
+        roomIds: uniqueRoomIds.join(","),
+        roomNames: selectedRooms.map((room) => room.name).join(", "),
         guestName,
         email,
         checkIn,

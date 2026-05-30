@@ -9,7 +9,7 @@ export type Room = {
 };
 
 export type BookingDetails = {
-  room: Room;
+  rooms: Room[];
   guestName: string;
   email: string;
   checkIn: string;

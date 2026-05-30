@@ -18,7 +18,7 @@ export default function RoomCard({ room, isSelected, onSelect }: RoomCardProps) 
         <div>
           <p className="eyebrow icon-text">
             <HotelIcon fontSize="small" />
-            Available room
+            Available stay
           </p>
           <h3>{room.name}</h3>
         </div>
@@ -47,8 +47,12 @@ export default function RoomCard({ room, isSelected, onSelect }: RoomCardProps) 
         ))}
       </div>
 
-      <button className={isSelected ? "secondary-button" : "primary-button"} type="button" onClick={() => onSelect(room)}>
-        {isSelected ? "Selected" : "Choose room"}
+      <button
+        className={isSelected ? "secondary-button" : "primary-button"}
+        type="button"
+        onClick={() => onSelect(room)}
+      >
+        {isSelected ? "Remove room" : "Choose room"}
       </button>
     </article>
   );

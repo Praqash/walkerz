@@ -12,9 +12,10 @@ type BookingFormState = {
 };
 
 type BookingPanelProps = {
-  room: Room;
+  rooms: Room[];
   formState: BookingFormState;
   nights: number;
+  pricePerNight: number;
   total: number;
   canSubmit: boolean;
   isProcessing: boolean;
@@ -24,9 +25,10 @@ type BookingPanelProps = {
 };
 
 export default function BookingPanel({
-  room,
+  rooms,
   formState,
   nights,
+  pricePerNight,
   total,
   canSubmit,
   isProcessing,
@@ -34,13 +36,24 @@ export default function BookingPanel({
   onChange,
   onSubmit,
 }: BookingPanelProps) {
+  const maxGuests = Math.max(
+    1,
+    rooms.reduce((sum, room) => sum + room.maxGuests, 0),
+  );
+  const roomLabel =
+    rooms.length === 0
+      ? "a room"
+      : rooms.length === 1
+        ? rooms[0].name
+        : `${rooms.length} selected rooms`;
+
   return (
     <aside id="booking" className="booking-panel card">
       <p className="eyebrow icon-text">
         <CalendarTodayIcon fontSize="small" />
-        Booking of room
+        Room booking
       </p>
-      <h3>Reserve {room.name}</h3>
+      <h3>Reserve {roomLabel}</h3>
       <p className="muted-text">
         Fill in the details to calculate your stay and complete the payment
         securely with Razorpay.
@@ -98,7 +111,7 @@ export default function BookingPanel({
             onChange={(event) => onChange("guests", Number(event.target.value))}
           >
             {Array.from(
-              { length: room.maxGuests },
+              { length: maxGuests },
               (_, index) => index + 1,
             ).map((guestCount) => (
               <option key={guestCount} value={guestCount}>
@@ -111,8 +124,12 @@ export default function BookingPanel({
 
       <div className="price-summary">
         <div>
-          <span>Room price</span>
-          <strong>{formatCurrency(room.pricePerNight)}</strong>
+          <span>Selected rooms</span>
+          <strong>{rooms.length}</strong>
+        </div>
+        <div>
+          <span>Room price per night</span>
+          <strong>{formatCurrency(pricePerNight)}</strong>
         </div>
         <div>
           <span>Nights</span>
